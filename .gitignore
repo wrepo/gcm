@@ -17,5 +17,11 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+# Jetbrain
+.idea
+
+# VS Code
+.vscode
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
