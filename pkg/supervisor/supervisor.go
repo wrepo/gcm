@@ -1,9 +1,9 @@
 package supervisor
 
 import (
-	"log"
 	"sync"
 
+	"gcm/pkg/logger"
 	"gcm/pkg/services"
 )
 
@@ -22,6 +22,10 @@ type (
 	Config struct {
 		ListenAddress string
 	}
+)
+
+var (
+	log = logger.Module("supervisor")
 )
 
 func NewSupervisor(config *Config) *Supervisor {
@@ -61,7 +65,7 @@ func (s *Supervisor) run() {
 	// 启动 Listener
 	err := s.listener.Run()
 	if err != nil {
-		log.Println(err)
+		log.Info(err.Error())
 		return
 	}
 	// 处理事件
@@ -71,7 +75,7 @@ func (s *Supervisor) run() {
 		for {
 			select {
 			case <-s.done:
-				log.Println("stopping supervisor")
+				log.Info("stopping supervisor")
 				return
 			case conn := <-s.listenChan:
 				clientId := conn.Conn().RemoteAddr().String()
