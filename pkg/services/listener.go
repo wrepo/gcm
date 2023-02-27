@@ -1,7 +1,7 @@
 package services
 
 import (
-	"log"
+	"gcm/pkg/logger"
 	"net"
 	"sync"
 	"time"
@@ -26,6 +26,10 @@ type (
 	}
 )
 
+var (
+	log = logger.Module("listener")
+)
+
 func NewListener(address string, listenChan chan ListenChannel) *Listener {
 	return &Listener{
 		address:    address,
@@ -35,7 +39,7 @@ func NewListener(address string, listenChan chan ListenChannel) *Listener {
 }
 
 func (l *Listener) Run() error {
-	log.Println("Start....")
+	log.Info("Start....")
 	clientConn, err := net.ResolveTCPAddr("tcp4", l.address)
 	if nil != err {
 		return err
@@ -44,7 +48,7 @@ func (l *Listener) Run() error {
 	if nil != err {
 		return err
 	}
-	log.Println("listening on", listener.Addr())
+	log.Info("listening on " + listener.Addr().String())
 
 	l.wg.Add(1)
 	go func() {
@@ -52,7 +56,7 @@ func (l *Listener) Run() error {
 		for {
 			select {
 			case <-l.done:
-				log.Println("stopping listening on", listener.Addr())
+				log.Info("stopping listening on " + listener.Addr().String())
 				_ = listener.Close()
 				return
 			default:
@@ -64,7 +68,7 @@ func (l *Listener) Run() error {
 				if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
 					continue
 				}
-				log.Println(err)
+				log.Info(err.Error())
 			}
 			l.listenChan <- &listenChannel{address: l.address, conn: conn}
 		}
