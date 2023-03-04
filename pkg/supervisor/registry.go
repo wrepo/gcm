@@ -9,6 +9,9 @@ type (
 
 		// Clone returns a copy of the object.
 		Clone() Object
+
+		// DefaultSpec returns the default spec of the object.
+		DefaultSpec() interface{}
 	}
 )
 
